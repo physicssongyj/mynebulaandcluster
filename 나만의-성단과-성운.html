@@ -1,0 +1,1362 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{margin:0;padding:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>나만의 성단과 성운</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --void:#05081A;
+  --deep:#0B1030;
+  --panel:rgba(20,28,64,0.62);
+  --panel-solid:#141C40;
+  --line:rgba(150,168,230,0.22);
+  --line-strong:rgba(168,150,255,0.55);
+  --star:#EEF2FF;
+  --text:#E7ECFF;
+  --muted:#9FAAD6;
+  --dim:#7C87B4;
+  --violet:#9B7BFF;
+  --violet-deep:#6B46E5;
+  --lav:#C9B8FF;
+  --cyan:#6FE3F2;
+  --rose:#F58CC0;
+  --ok:#68E0B0;
+  --shadow:0 18px 50px rgba(2,4,20,0.55);
+  --r:18px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--void);
+  color:var(--text);
+  font-family:'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:17px;
+  line-height:1.65;
+  -webkit-text-size-adjust:100%;
+  overflow-x:hidden;
+}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.3}
+p{margin:0}
+button{font:inherit;color:inherit}
+
+/* ---------- background ---------- */
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none}
+#stars{width:100%;height:100%;display:block}
+.glow{position:fixed;z-index:0;pointer-events:none;border-radius:50%;filter:blur(60px);opacity:.5}
+.glow.a{width:min(70vw,620px);aspect-ratio:1;left:-14vw;top:-12vh;background:radial-gradient(circle,rgba(107,70,229,.55),transparent 66%)}
+.glow.b{width:min(62vw,540px);aspect-ratio:1;right:-16vw;top:34vh;background:radial-gradient(circle,rgba(111,227,242,.24),transparent 66%)}
+.glow.c{width:min(80vw,700px);aspect-ratio:1;left:10vw;bottom:-28vh;background:radial-gradient(circle,rgba(245,140,192,.20),transparent 66%)}
+
+/* ---------- top progress ---------- */
+.topbar{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+  background:linear-gradient(180deg,rgba(5,8,26,.96),rgba(5,8,26,.72) 70%,rgba(5,8,26,0));
+  padding:12px 16px 16px;
+  backdrop-filter:blur(6px);
+}
+.rail{height:4px;border-radius:99px;background:rgba(150,168,230,.18);overflow:hidden}
+.rail-fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--violet-deep),var(--violet) 55%,var(--cyan));transition:width .45s cubic-bezier(.4,0,.2,1)}
+.topmeta{display:flex;align-items:baseline;gap:10px;margin-top:9px;flex-wrap:wrap}
+.stepnum{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.06em;color:var(--lav)}
+.steplabel{font-size:14px;color:var(--dim)}
+
+/* ---------- layout ---------- */
+.wrap{position:relative;z-index:10;max-width:760px;margin:0 auto;padding:0 18px 72px}
+.screen{padding-block:14px 0;animation:rise .42s cubic-bezier(.2,.7,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .screen{animation:none}
+  .rail-fill{transition:none}
+}
+
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:.18em;color:var(--cyan);text-transform:uppercase;margin-bottom:10px}
+h2.q{font-family:'Gowun Batang',serif;font-size:clamp(23px,5.4vw,30px);font-weight:700;letter-spacing:-.01em}
+.lead{color:var(--muted);margin-top:10px;font-size:16px}
+.note{font-size:14px;color:var(--dim);line-height:1.6}
+
+.stack{display:flex;flex-direction:column;gap:14px;margin-top:22px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:22px}
+@media (max-width:520px){.grid2{grid-template-columns:1fr}}
+
+/* ---------- option cards ---------- */
+.opt{
+  position:relative;display:flex;gap:13px;align-items:flex-start;text-align:left;width:100%;
+  background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r);
+  padding:16px 18px 16px 15px;cursor:pointer;
+  transition:border-color .18s,background .18s,transform .18s;
+  backdrop-filter:blur(8px);
+}
+.opt:hover{border-color:var(--line-strong);background:rgba(30,40,88,.7)}
+.opt:active{transform:scale(.988)}
+.opt .mark{
+  flex:0 0 26px;height:26px;margin-top:1px;border-radius:50%;
+  border:1.5px solid var(--line);display:grid;place-items:center;
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);transition:.18s;
+}
+.opt .txt{flex:1;min-width:0}
+.opt .t{font-weight:500;line-height:1.5}
+.opt .d{font-size:14.5px;color:var(--muted);margin-top:3px;line-height:1.55}
+.opt[aria-pressed="true"]{border-color:var(--violet);background:rgba(107,70,229,.26);box-shadow:0 0 0 1px var(--violet) inset}
+.opt[aria-pressed="true"] .mark{background:var(--violet);border-color:var(--violet);color:#0B0720;font-weight:700}
+.opt[aria-pressed="true"] .mark::after{content:"✓"}
+.opt[aria-pressed="true"] .mark span{display:none}
+:is(button,a,input,textarea,select):focus-visible{outline:3px solid var(--cyan);outline-offset:3px;border-radius:12px}
+
+/* mbti grid */
+.mbti{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}
+@media (max-width:560px){.mbti{grid-template-columns:repeat(2,1fr)}}
+.mbti .opt{justify-content:center;padding:14px 8px;flex-direction:column;align-items:center;gap:4px}
+.mbti .opt .t{font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;font-size:16.5px;font-weight:500}
+.mbti .opt .mark{display:none}
+.mbti .opt[aria-pressed="true"] .t::after{content:" ✓";color:var(--cyan)}
+.wide{margin-top:12px}
+.wide .opt{justify-content:center;text-align:center}
+.wide .opt .mark{display:none}
+.wide .opt[aria-pressed="true"] .t::after{content:" ✓";color:var(--cyan)}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:16px 26px;border-radius:14px;border:1.5px solid transparent;cursor:pointer;
+  font-weight:600;font-size:17px;transition:.18s;text-decoration:none;
+}
+.btn.primary{background:linear-gradient(135deg,var(--violet-deep),var(--violet));color:#fff;box-shadow:0 10px 30px rgba(107,70,229,.42)}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--muted)}
+.btn.ghost:hover{border-color:var(--line-strong);color:var(--text)}
+.btn.copy{background:linear-gradient(135deg,#0E7C8C,var(--cyan));color:#04121A;width:100%;font-size:18px;padding:18px 20px;box-shadow:0 10px 30px rgba(111,227,242,.24)}
+.btn.copy:hover{filter:brightness(1.08)}
+.btn.copy.done{background:linear-gradient(135deg,#14855F,var(--ok));color:#03150E}
+.btn[disabled]{opacity:.45;cursor:not-allowed;filter:none}
+.btn.big{width:100%;padding:20px;font-size:19px}
+.navrow{display:flex;gap:12px;align-items:center;margin-top:26px;flex-wrap:wrap}
+.navrow .btn.ghost{padding:14px 20px;font-size:16px}
+.spacer{flex:1}
+
+/* ---------- panels ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;backdrop-filter:blur(8px)}
+.card h3{font-family:'Gowun Batang',serif;font-size:20px;margin-bottom:8px}
+.card .sci{font-size:15px;color:var(--muted)}
+.subcards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media (max-width:520px){.subcards{grid-template-columns:1fr}}
+.subcard{background:rgba(9,14,38,.6);border:1px solid var(--line);border-radius:13px;padding:14px}
+.subcard b{display:block;font-size:15.5px;color:var(--lav);margin-bottom:4px}
+.subcard span{font-size:14.5px;color:var(--muted);line-height:1.55}
+
+/* ---------- form ---------- */
+.fields{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+@media (max-width:560px){.fields{grid-template-columns:repeat(2,1fr)}.fields .f-name{grid-column:1/-1}}
+.field label{display:block;font-size:14px;color:var(--lav);margin-bottom:7px;letter-spacing:.02em}
+.field input,.field select{
+  width:100%;padding:14px 12px;font-size:17px;border-radius:12px;
+  background:rgba(9,14,38,.75);border:1.5px solid var(--line);color:var(--text);
+  font-family:inherit;
+}
+.field input:focus,.field select:focus{border-color:var(--violet);outline:none;box-shadow:0 0 0 3px rgba(155,123,255,.25)}
+.field .unit{color:var(--dim);font-size:13px;margin-left:4px}
+.preview{margin-top:16px;font-family:'IBM Plex Mono',monospace;font-size:15px;color:var(--cyan);min-height:24px}
+
+textarea{
+  width:100%;min-height:190px;padding:16px;font-size:16.5px;line-height:1.75;border-radius:14px;
+  background:rgba(9,14,38,.75);border:1.5px solid var(--line);color:var(--text);
+  font-family:inherit;resize:vertical;
+}
+textarea:focus{border-color:var(--violet);outline:none;box-shadow:0 0 0 3px rgba(155,123,255,.25)}
+
+/* ---------- result ---------- */
+.dna{
+  margin-top:22px;border-radius:22px;padding:26px 22px;
+  background:linear-gradient(160deg,rgba(28,22,72,.9),rgba(10,14,40,.9));
+  border:1px solid var(--line-strong);box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.dna::before{content:"";position:absolute;inset:-40% -20% auto -20%;height:70%;background:radial-gradient(ellipse at 50% 0,rgba(155,123,255,.4),transparent 70%);pointer-events:none}
+.dna .type{position:relative;font-family:'Gowun Batang',serif;font-size:clamp(25px,6.2vw,34px);font-weight:700;line-height:1.35;text-wrap:balance}
+.dna .sum{position:relative;margin-top:14px;color:var(--lav);font-size:16px;line-height:1.75}
+.rows{position:relative;margin-top:22px;display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.row{display:grid;grid-template-columns:146px 1fr;gap:12px;background:rgba(8,12,34,.86);padding:13px 15px;align-items:baseline}
+@media (max-width:440px){.row{grid-template-columns:1fr;gap:2px}}
+.row dt{font-size:14px;color:var(--dim);letter-spacing:.02em}
+.row dd{margin:0;font-size:16px;font-weight:500}
+.hintline{margin-top:14px;font-size:13.5px;color:var(--dim);font-family:'IBM Plex Mono',monospace;line-height:1.7}
+
+/* ---------- prompt box ---------- */
+.promptbox{
+  margin-top:18px;background:rgba(6,10,28,.88);border:1px solid var(--line);border-left:3px solid var(--cyan);
+  border-radius:14px;padding:20px;white-space:pre-wrap;word-break:break-word;
+  font-size:16px;line-height:1.85;color:#DCE4FF;
+}
+.copywrap{margin-top:14px}
+.toast{margin-top:10px;font-size:15px;color:var(--ok);min-height:22px}
+.tip{margin-top:16px;font-size:14.5px;color:var(--dim);line-height:1.7}
+
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.chip{background:rgba(155,123,255,.16);border:1px solid var(--line-strong);color:var(--lav);border-radius:99px;padding:9px 16px;font-size:15px;cursor:pointer}
+.chip:hover{background:rgba(155,123,255,.3);color:#fff}
+
+.finale{text-align:center;padding-block:30px}
+.finale h2{font-family:'Gowun Batang',serif;font-size:clamp(28px,7vw,38px)}
+.finale p{color:var(--muted);margin-top:18px;line-height:1.9;font-size:16.5px}
+.finale .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(3,5,18,.86);display:grid;place-items:center;padding:20px;backdrop-filter:blur(4px)}
+.overlay .box{background:var(--panel-solid);border:1px solid var(--line-strong);border-radius:20px;padding:20px;max-width:440px;width:100%;max-height:90vh;overflow:auto;text-align:center}
+.overlay img{width:100%;border-radius:12px;display:block;margin-bottom:14px}
+.overlay .note{margin-bottom:14px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+
+<div id="sky"><canvas id="stars"></canvas></div>
+<div class="glow a"></div><div class="glow b"></div><div class="glow c"></div>
+
+<header class="topbar" id="topbar" hidden>
+  <div class="rail"><div class="rail-fill" id="railFill"></div></div>
+  <div class="topmeta">
+    <span class="stepnum" id="stepNum">STEP 1 / 8</span>
+    <span class="steplabel" id="stepLabel">우주 탐험 시작하기</span>
+  </div>
+</header>
+
+<div class="wrap"><main id="app" aria-live="polite"></main></div>
+
+<script>
+/* =========================================================
+   1. 데이터 테이블
+   ========================================================= */
+const COLORS = [
+  {id:1, name:'파랑·보라',  family:'파랑과 보라', light:'파랑과 보라가 자연스럽게 섞인 빛', short:'보랏빛',   grad:['#3B5BDB','#8B5CF6']},
+  {id:2, name:'빨강·주황',  family:'빨강과 주황', light:'붉은빛과 주황빛이 타오르듯 번지는 빛', short:'붉은빛', grad:['#E03131','#FD7E14']},
+  {id:3, name:'초록·청록',  family:'초록과 청록', light:'초록과 청록이 맑게 어우러진 빛', short:'청록빛',   grad:['#0CA678','#22B8CF']},
+  {id:4, name:'분홍·라벤더',family:'분홍과 라벤더', light:'분홍빛과 라벤더빛이 부드럽게 번지는 빛', short:'분홍빛', grad:['#E64980','#B197FC']},
+  {id:5, name:'흰색·은색',  family:'흰색과 은색', light:'흰빛과 은빛이 투명하게 반짝이는 빛', short:'은빛',   grad:['#8FA6C9','#E9EEF8']},
+  {id:6, name:'무지개빛',   family:'여러 색이 섞인 무지개', light:'여러 색이 한데 섞여 무지갯빛으로 일렁이는 빛', short:'무지갯빛', grad:['#7C3AED','#22B8CF']}
+];
+const VALUES = [
+  {id:1, name:'도전과 성장', text:'새로운 것에 도전하며 한 걸음씩 성장하려는 마음', persona:'개척자'},
+  {id:2, name:'자유와 개성', text:'나답게, 자유롭게 살아가고 싶은 마음',          persona:'자유인'},
+  {id:3, name:'배려와 따뜻함', text:'다른 사람을 이해하고 배려하려는 따뜻한 마음', persona:'동행자'},
+  {id:4, name:'호기심과 탐험', text:'새로운 것을 발견하고 탐구하려는 호기심',     persona:'탐험가'},
+  {id:5, name:'집중과 끈기', text:'목표를 향해 꾸준히 나아가는 끈기',            persona:'등대지기'},
+  {id:6, name:'관계와 조화', text:'친구들과 어울려 조화를 이루려는 마음',        persona:'조율자'}
+];
+const STARROLES = [
+  {id:1, name:'중심에서 강렬하게 빛나는 별', text:'중심에서 스스로 밝게 빛나는'},
+  {id:2, name:'여러 별과 함께 빛나는 별',   text:'여러 별과 함께 어울려 빛나는'},
+  {id:3, name:'조용하지만 오래 빛나는 별',  text:'조용하지만 오래도록 빛나는'},
+  {id:4, name:'자유롭게 이동하는 별',       text:'한곳에 머무르지 않고 자유롭게 움직이는'},
+  {id:5, name:'멀리서도 눈에 띄는 독특한 별', text:'멀리서도 한눈에 알아볼 수 있는 독특한'},
+  {id:6, name:'아직 모습을 만들어가는 새로운 별', text:'이제 막 자기 모습을 갖추어 가는 새로운'}
+];
+const ENERGY = [
+  {id:1, name:'중심에서 바깥으로 강하게 퍼져나감', text:'중심에서 바깥으로 힘차게 뻗어 나가는', short:'힘차게 뻗어가는'},
+  {id:2, name:'물결처럼 부드럽게 흐름',            text:'물결처럼 부드럽게 흐르는',            short:'부드럽게 흐르는'},
+  {id:3, name:'여러 점들이 모여 하나의 형태를 만듦', text:'흩어져 있던 점들이 모여 하나의 형태를 이루는', short:'하나로 모이는'},
+  {id:4, name:'나선형으로 천천히 회전함',          text:'나선을 그리며 천천히 회전하는',        short:'나선을 그리는'},
+  {id:5, name:'중심으로 점점 모여듦',              text:'중심을 향해 차곡차곡 모여드는',        short:'중심으로 모이는'},
+  {id:6, name:'일정한 방향 없이 자유롭게 퍼짐',    text:'정해진 방향 없이 자유롭게 퍼져 나가는', short:'자유롭게 퍼지는'}
+];
+const MOODS = [
+  {id:1, name:'신비롭고 몽환적임',     adj:'신비롭고 몽환적인'},
+  {id:2, name:'강렬하고 에너지 넘침',  adj:'강렬하고 에너지가 넘치는'},
+  {id:3, name:'조용하고 평화로움',     adj:'조용하고 평화로운'},
+  {id:4, name:'질서정연하고 균형 잡힘', adj:'질서정연하고 균형 잡힌'},
+  {id:5, name:'자유롭고 독특함',       adj:'자유롭고 독특한'},
+  {id:6, name:'따뜻하고 희망적임',     adj:'따뜻하고 희망적인'}
+];
+const FEELINGS = [
+  {id:1, name:'새로운 것에 도전하고 싶어지는 느낌'},
+  {id:2, name:'마음이 편안해지는 느낌'},
+  {id:3, name:'신비롭고 궁금해지는 느낌'},
+  {id:4, name:'에너지가 솟는 느낌'},
+  {id:5, name:'따뜻하고 위로받는 느낌'},
+  {id:6, name:'자유롭게 상상하고 싶어지는 느낌'}
+];
+const OBJECTS = {
+  nebula:{key:'nebula', name:'성운', label:'나만의 성운',
+    desc:'가스와 먼지가 넓게 퍼져 있는 신비로운 우주',
+    long:'우주 공간의 가스와 먼지로 이루어진 성운'},
+  open:{key:'open', name:'산개성단', label:'나만의 산개성단',
+    desc:'여러 별들이 비교적 자유롭게 모여 있는 별들의 집단',
+    long:'별들이 비교적 자유롭게 모여 있는 산개성단'},
+  globular:{key:'globular', name:'구상성단', label:'나만의 구상성단',
+    desc:'수많은 별들이 중심을 향해 빽빽하게 모인 별들의 집단',
+    long:'수많은 별이 공처럼 빽빽하게 모여 있는 구상성단'}
+};
+/* MBTI → 시각적 표현 요소 (성격 판정이 아니라 그림의 스타일 참고값) */
+const AXIS = {
+  E:{light:'바깥으로 넓게 확장되는 느낌', key:'확장되는 빛'},
+  I:{light:'중심에 응축되어 깊이가 느껴지는 느낌', key:'응축된 빛'},
+  S:{detail:'별과 가스, 먼지의 구조가 비교적 또렷하게 보이는 표현', key:'또렷한 구조'},
+  N:{detail:'몽환적이고 상상력이 강조된 표현', key:'몽환적 표현'},
+  T:{line:'선명한 대비와 구조적인 형태', key:'선명한 대비'},
+  F:{line:'부드럽게 이어지는 색과 유기적인 곡선', key:'유기적 곡선'},
+  J:{form:'균형이 잡힌 안정된 구성', key:'안정된 구성'},
+  P:{form:'비대칭적이고 자유로운 구성', key:'자유로운 구성'}
+};
+const MBTI_LIST = ['ISTJ','ISFJ','INFJ','INTJ','ISTP','ISFP','INFP','INTP','ESTP','ESFP','ENFP','ENTP','ESTJ','ESFJ','ENFJ','ENTJ'];
+
+/* =========================================================
+   2. 조사 처리 유틸
+   ========================================================= */
+function jong(w){
+  if(!w) return 0;
+  const c = w.charCodeAt(w.length-1);
+  if(c < 0xAC00 || c > 0xD7A3) return -1;
+  return (c - 0xAC00) % 28;
+}
+function josa(w, withJong, without){
+  const j = jong(w);
+  if(j === -1) return w + without;
+  return w + (j ? withJong : without);
+}
+function josaRo(w){ // 으로 / 로
+  const j = jong(w);
+  if(j === -1 || j === 0 || j === 8) return w + '로';
+  return w + '으로';
+}
+
+/* =========================================================
+   3. 상태
+   ========================================================= */
+const KEY = 'myUniverse_v1';
+const S = {
+  studentGrade:'3', studentClass:'', studentNumber:'', studentName:'',
+  mbti:'', mbtiKnown:null,
+  axes:{EI:'', SN:'', TF:'', JP:''},
+  selectedColor:null, valueId:null, starRoleId:null, energyId:null, moodId:null, feelingId:null,
+  spaceObject:null,
+  artworkTitle:'', artworkDescription:'', descTouched:false,
+  screen:'intro', qi:0
+};
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+}
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return false;
+    const o = JSON.parse(raw);
+    if(!o || typeof o !== 'object') return false;
+    Object.assign(S, o);
+    return true;
+  }catch(e){ return false; }
+}
+function reset(){
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  Object.assign(S, {
+    studentGrade:'3', studentClass:'', studentNumber:'', studentName:'',
+    mbti:'', mbtiKnown:null, axes:{EI:'',SN:'',TF:'',JP:''},
+    selectedColor:null, valueId:null, starRoleId:null, energyId:null, moodId:null, feelingId:null,
+    spaceObject:null, artworkTitle:'', artworkDescription:'', descTouched:false, screen:'intro', qi:0
+  });
+  delete S.screenSaved;
+}
+
+/* =========================================================
+   4. 결과 종합 로직
+   ========================================================= */
+function pick(arr, id){ return arr.find(x => x.id === id) || null; }
+function axesOf(){
+  if(S.mbti && MBTI_LIST.includes(S.mbti)){
+    return {EI:S.mbti[0], SN:S.mbti[1], TF:S.mbti[2], JP:S.mbti[3]};
+  }
+  return {EI:S.axes.EI||'E', SN:S.axes.SN||'N', TF:S.axes.TF||'F', JP:S.axes.JP||'P'};
+}
+function ready(){
+  return S.selectedColor && S.valueId && S.starRoleId && S.energyId && S.moodId && S.feelingId;
+}
+function R(){
+  const c = pick(COLORS, S.selectedColor);
+  const v = pick(VALUES, S.valueId);
+  const r = pick(STARROLES, S.starRoleId);
+  const e = pick(ENERGY, S.energyId);
+  const m = pick(MOODS, S.moodId);
+  const f = pick(FEELINGS, S.feelingId);
+  const ax = axesOf();
+  const obj = S.spaceObject ? OBJECTS[S.spaceObject] : null;
+
+  const typeName = e.short + ' ' + c.short + ' ' + v.persona;
+  /* 느낌/상징 = 질문3 + 질문7 */
+  const symbol = v.text + ', 그리고 내 작품을 보는 사람이 ' + f.name + '을 받았으면 하는 마음';
+  /* 분위기 = 질문6 + MBTI 시각 요소 / 형태 = 질문5 + E·I, J·P */
+  const lightPhrase = AXIS[ax.EI].light;
+  const formPhrase  = AXIS[ax.JP].form;
+  const detailPhrase= AXIS[ax.SN].detail;
+  const linePhrase  = AXIS[ax.TF].line;
+  const keys = [AXIS[ax.EI].key, AXIS[ax.SN].key, AXIS[ax.TF].key, AXIS[ax.JP].key];
+
+  const summary = c.light + '을 내며 ' + e.text + ' ' + (obj ? obj.name : '우주') +
+    '. ' + josa(v.name,'을','를') + ' 상징하고, ' + m.adj + ' 분위기를 담고 있음.';
+
+  return {c,v,r,e,m,f,ax,obj,typeName,symbol,lightPhrase,formPhrase,detailPhrase,linePhrase,keys,summary};
+}
+
+function buildImagePrompt(){
+  const x = R();
+  if(!x.obj) return '';
+  const tail = '전체적으로 ' + x.m.adj + ' 분위기가 느껴지도록 표현해줘. 빛은 ' + josaRo(x.lightPhrase) +
+    ', 전체적인 형태는 ' + josaRo(x.formPhrase) + ' 잡아줘. ' + x.detailPhrase +
+    ', 그리고 ' + josa(x.linePhrase,'이','가') + ' 함께 느껴지면 좋겠어.';
+
+  if(x.obj.key === 'nebula'){
+    return [
+      '우주 공간에 떠 있는 거대한 가스와 먼지 구름인 성운을 그려줘.',
+      '이 성운은 ' + x.c.light + '을 띠고 있어.',
+      '이 성운을 통해 ' + x.symbol + '을 표현하고 싶어.',
+      '가스와 먼지는 ' + x.e.text + ' 모습으로 펼쳐지고 있어.',
+      tail,
+      '실제 천체 사진처럼 깊이감 있는 우주 공간과 별빛을 표현하되, 내가 선택한 특징이 자연스럽게 느껴지는 창작 성운으로 만들어줘.'
+    ].join('\n');
+  }
+  if(x.obj.key === 'open'){
+    return [
+      '넓은 우주 공간에 수많은 별들이 비교적 자유롭게 모여 있는 산개성단을 그려줘.',
+      '별들은 ' + x.c.family + ' 계열의 빛을 중심으로 표현해줘.',
+      '이 성단을 통해 ' + x.symbol + '을 표현하고 싶어.',
+      '별들은 ' + x.e.text + ' 모습으로 공간에 배치되도록 해줘.',
+      tail,
+      '산개성단은 가스 구름이 아니라 별들의 집단이므로, 하나하나의 별이 또렷하게 구분되어 보이도록 표현해줘.',
+      '실제 천체 사진처럼 깊이 있는 우주 공간을 표현하면서도 나만의 개성이 느껴지는 창작 산개성단으로 만들어줘.'
+    ].join('\n');
+  }
+  return [
+    '깊은 우주 공간에 수많은 별이 공처럼 빽빽하게 모여 있는 구상성단을 그려줘.',
+    '성단의 중심부는 밝게 빛나고, 별들은 바깥쪽으로 갈수록 점차 흩어지도록 표현해줘.',
+    '별빛은 ' + x.c.family + ' 계열을 중심으로 표현해줘.',
+    '이 성단을 통해 ' + x.symbol + '을 표현하고 싶어.',
+    '별의 배열과 빛의 흐름은 ' + x.e.text + ' 모습이 느껴지도록 해줘.',
+    tail,
+    '실제 천체 사진에서 볼 수 있는 깊이감과 별빛을 참고하되, 나의 특징을 담은 독창적인 구상성단으로 만들어줘.'
+  ].join('\n');
+}
+
+function buildDescription(){
+  const x = R();
+  if(!x.obj) return '';
+  return [
+    '나는 ' + x.obj.long + '을 나만의 모습으로 표현하였다.',
+    x.c.family + ' 계열의 빛은 ' + josa(x.v.text,'을','를') + ' 상징한다.',
+    x.e.text + ' 모습은 ' + x.r.text + ' 나의 모습을 나타낸다.',
+    '나는 이 작품이 ' + x.m.adj + ' 느낌으로 보이기를 바랐다.',
+    '내 작품을 본 사람도 ' + x.f.name + '을 받았으면 좋겠다.'
+  ].join(' ');
+}
+
+function buildTitles(){
+  const x = R();
+  const on = x.obj ? x.obj.name : '우주';
+  const pool = [
+    x.c.short + ' ' + x.v.name.split('과 ')[0],
+    x.e.short + ' ' + on,
+    '나를 닮은 ' + on,
+    x.c.short + '의 ' + x.v.persona,
+    x.m.adj + ' ' + on,
+    x.v.name.split('과 ')[1] + '의 ' + on,
+    x.e.short + ' ' + x.c.short
+  ];
+  const out = [];
+  for(const t of pool){ if(!out.includes(t)) out.push(t); if(out.length===3) break; }
+  return out;
+}
+
+function buildPosterPrompt(){
+  const x = R();
+  const info = (S.studentGrade||'3') + '학년 ' + (S.studentClass||'○') + '반 ' + (S.studentNumber||'○') + '번 이름 : ' + (S.studentName||'○○○');
+  const title = S.artworkTitle || (buildTitles()[0] || '나의 우주');
+  const desc = (S.artworkDescription || buildDescription()).trim();
+  return [
+    'A4 세로형 과학·미술 융합 작품 포스터를 제작해줘.',
+    '내가 첨부한 이미지는 내가 AI를 활용하여 제작한 ' + (x.obj ? x.obj.name : '성단·성운') + ' 작품이야.',
+    '첨부한 작품 이미지를 임의로 다른 이미지로 바꾸거나 새롭게 재생성하지 말고, 원본 작품이 잘 보이도록 포스터의 중심에 크게 배치해줘.',
+    '전체적인 디자인은 우주와 천문학을 연상시키는 세련되고 깔끔한 분위기로 제작해줘.',
+    '',
+    '포스터 위쪽에는 다음 학생 정보를 정확하게 넣어줘.',
+    '‘' + info + '’',
+    '',
+    '그 아래에는 작품 제목',
+    '‘' + title + '’',
+    '을 넣어줘.',
+    '',
+    '포스터의 중앙에는 내가 첨부한 작품 이미지를 가장 크게 배치해줘.',
+    '',
+    '포스터 아래쪽에는 다음 작품 설명을 읽기 쉬운 크기의 글씨로 넣어줘.',
+    '‘' + desc + '’',
+    '',
+    'A4 세로 비율을 유지하고, 제목·이미지·설명의 위계가 명확하도록 구성해줘.',
+    '중학생의 과학 작품 전시회에 사용할 수 있는 전문적이고 깔끔한 포스터 디자인으로 만들어줘.',
+    '한글 문장은 내가 입력한 내용을 임의로 요약하거나 수정하지 말고 정확하게 표시해줘.',
+    '불필요한 장식이나 임의의 문구는 추가하지 말아줘.'
+  ].join('\n');
+}
+
+function buildSummaryText(){
+  const x = R();
+  return [
+    '=== 나만의 성단·성운 활동 기록 ===',
+    '',
+    '[학생] ' + (S.studentGrade||'3') + '학년 ' + (S.studentClass||'-') + '반 ' + (S.studentNumber||'-') + '번 ' + (S.studentName||'-'),
+    '',
+    '[나의 우주 유형] ' + x.typeName,
+    '- 대표 색: ' + x.c.name,
+    '- 나를 나타내는 가치: ' + x.v.name,
+    '- 에너지의 움직임: ' + x.e.name,
+    '- 우주의 분위기: ' + x.m.name,
+    '- 우주 속 나의 모습: ' + x.r.name,
+    '- 작품을 본 사람이 받았으면 하는 느낌: ' + x.f.name,
+    '- 선택한 천체: ' + (x.obj ? x.obj.name : '-'),
+    '- 시각 표현 참고 요소: ' + x.keys.join(' · ') + (S.mbti ? ' (참고 MBTI ' + S.mbti + ')' : ''),
+    '',
+    '[작품 제목] ' + (S.artworkTitle || '-'),
+    '',
+    '[작품 설명]',
+    (S.artworkDescription || buildDescription()),
+    '',
+    '[이미지 생성 프롬프트]',
+    buildImagePrompt(),
+    '',
+    '[포스터 제작 프롬프트]',
+    buildPosterPrompt()
+  ].join('\n');
+}
+
+/* =========================================================
+   5. 질문 구성
+   ========================================================= */
+function questions(){
+  const list = [{
+    id:'q1', variant:'mbti',
+    title:'나의 MBTI는?',
+    lead:'알고 있는 MBTI를 골라주세요. 모른다면 아래 버튼을 눌러도 좋아요.',
+    foot:'MBTI는 나를 완전히 설명하는 답이 아니라, 나의 작품 아이디어를 만드는 힌트로만 사용해요.'
+  }];
+  if(S.mbtiKnown === false){
+    list.push(
+      {id:'qA', title:'친구들과 함께 있을 때 나는?', lead:'작품의 빛이 퍼지는 방식을 정하는 질문이에요.',
+       options:[{t:'여러 사람과 이야기할 때 에너지가 생긴다.'},{t:'혼자 있거나 친한 몇 명과 있을 때 편안하다.'}]},
+      {id:'qB', title:'무언가를 볼 때 나는?', lead:'작품의 표현 방식을 정하는 질문이에요.',
+       options:[{t:'실제 모습과 구체적인 특징을 먼저 본다.'},{t:'보면서 새로운 의미나 상상을 떠올린다.'}]},
+      {id:'qC', title:'중요한 선택을 할 때 나는?', lead:'작품의 색과 선의 느낌을 정하는 질문이에요.',
+       options:[{t:'이유와 논리를 먼저 생각한다.'},{t:'사람의 마음과 느낌을 먼저 생각한다.'}]},
+      {id:'qD', title:'어떤 활동을 할 때 나는?', lead:'작품의 전체 구성을 정하는 질문이에요.',
+       options:[{t:'미리 계획하고 순서대로 하는 것이 편하다.'},{t:'상황에 따라 자유롭게 바꾸면서 하는 것이 좋다.'}]}
+    );
+  }
+  list.push(
+    {id:'q2', title:'지금 나를 가장 잘 나타내는 색은?', lead:'이 선택은 내 작품의 대표 색이 됩니다.',
+     options:COLORS.map(c=>({t:c.name, id:c.id}))},
+    {id:'q3', title:'내가 가장 중요하게 생각하는 것은?', lead:'이 선택은 작품이 담을 의미가 됩니다.',
+     options:[
+       {t:'새로운 것에 도전하고 성장하는 것', id:1},
+       {t:'자유롭게 나답게 살아가는 것', id:2},
+       {t:'다른 사람을 이해하고 배려하는 것', id:3},
+       {t:'새로운 것을 발견하고 탐구하는 것', id:4},
+       {t:'목표를 향해 꾸준히 노력하는 것', id:5},
+       {t:'친구들과 함께 조화롭게 지내는 것', id:6}
+     ]},
+    {id:'q4', title:'내가 우주 속에서 빛난다면 어떤 모습일까?', lead:'작품 설명과 이미지의 분위기에 반영됩니다.',
+     options:STARROLES.map(r=>({t:r.name, id:r.id}))},
+    {id:'q5', title:'나의 에너지가 움직이는 모습은?', lead:'작품의 형태를 가장 크게 결정하는 질문이에요.',
+     options:ENERGY.map(e=>({t:e.name, id:e.id}))},
+    {id:'q6', title:'내가 좋아하는 우주의 분위기는?', lead:'작품 전체의 분위기가 됩니다.',
+     options:MOODS.map(m=>({t:m.name, id:m.id}))},
+    {id:'q7', title:'내 작품을 본 사람이 어떤 느낌을 받았으면 좋겠어?', lead:'작품의 의미와 설명에 반영됩니다.',
+     options:FEELINGS.map(f=>({t:f.name, id:f.id}))}
+  );
+  return list;
+}
+function answerOf(qid){
+  switch(qid){
+    case 'q1': return S.mbtiKnown === false ? '__unknown__' : (S.mbti || null);
+    case 'qA': return S.axes.EI ? (S.axes.EI==='E'?1:2) : null;
+    case 'qB': return S.axes.SN ? (S.axes.SN==='S'?1:2) : null;
+    case 'qC': return S.axes.TF ? (S.axes.TF==='T'?1:2) : null;
+    case 'qD': return S.axes.JP ? (S.axes.JP==='J'?1:2) : null;
+    case 'q2': return S.selectedColor;
+    case 'q3': return S.valueId;
+    case 'q4': return S.starRoleId;
+    case 'q5': return S.energyId;
+    case 'q6': return S.moodId;
+    case 'q7': return S.feelingId;
+  }
+  return null;
+}
+function setAnswer(qid, val){
+  switch(qid){
+    case 'qA': S.axes.EI = val===1?'E':'I'; break;
+    case 'qB': S.axes.SN = val===1?'S':'N'; break;
+    case 'qC': S.axes.TF = val===1?'T':'F'; break;
+    case 'qD': S.axes.JP = val===1?'J':'P'; break;
+    case 'q2': S.selectedColor = val; break;
+    case 'q3': S.valueId = val; break;
+    case 'q4': S.starRoleId = val; break;
+    case 'q5': S.energyId = val; break;
+    case 'q6': S.moodId = val; break;
+    case 'q7': S.feelingId = val; break;
+  }
+  save();
+}
+
+/* =========================================================
+   6. 화면 전환 / 진행 표시
+   ========================================================= */
+const STEPS = {
+  intro:{n:1, label:'우주 탐험 시작하기'},
+  info:{n:2, label:'기본 정보 입력'},
+  concept:{n:3, label:'나의 우주 성향 테스트'},
+  quiz:{n:3, label:'나의 우주 성향 테스트'},
+  result:{n:4, label:'나의 우주 캐릭터 결과'},
+  object:{n:5, label:'만들고 싶은 성단·성운 선택'},
+  image:{n:6, label:'AI 이미지 생성 프롬프트'},
+  desc:{n:7, label:'작품 설명과 제목'},
+  poster:{n:8, label:'AI 포스터 제작 프롬프트'},
+  done:{n:8, label:'활동 완료'}
+};
+const app = document.getElementById('app');
+const topbar = document.getElementById('topbar');
+const railFill = document.getElementById('railFill');
+const stepNum = document.getElementById('stepNum');
+const stepLabel = document.getElementById('stepLabel');
+
+function go(screen, qi){
+  S.screen = screen;
+  if(typeof qi === 'number') S.qi = qi;
+  save();
+  render();
+  window.scrollTo(0, 0);
+}
+function updateBar(){
+  const st = STEPS[S.screen];
+  topbar.hidden = (S.screen === 'intro');
+  stepNum.textContent = 'STEP ' + st.n + ' / 8';
+  stepLabel.textContent = st.label;
+  let p;
+  if(S.screen === 'quiz'){
+    const qs = questions();
+    p = (2 + Math.min(S.qi, qs.length) / qs.length) / 8;
+  }else if(S.screen === 'concept'){
+    p = 2 / 8;
+  }else{
+    p = st.n / 8;
+  }
+  if(S.screen === 'done') p = 1;
+  railFill.style.width = Math.max(4, p * 100) + '%';
+}
+
+/* 요소 생성 헬퍼 */
+function el(tag, cls, html){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(html !== undefined) e.innerHTML = html;
+  return e;
+}
+function optionButton(text, desc, index, selected, onClick){
+  const b = el('button','opt');
+  b.type = 'button';
+  b.setAttribute('aria-pressed', selected ? 'true' : 'false');
+  const mark = el('span','mark');
+  mark.appendChild(el('span','', String(index)));
+  const txt = el('span','txt');
+  txt.appendChild(el('span','t', text));
+  if(desc) txt.appendChild(el('span','d', desc));
+  b.appendChild(mark); b.appendChild(txt);
+  b.addEventListener('click', onClick);
+  return b;
+}
+function navRow(backFn, nextLabel, nextFn, nextEnabled){
+  const row = el('div','navrow');
+  if(backFn){
+    const b = el('button','btn ghost','← 이전');
+    b.type='button'; b.addEventListener('click', backFn); row.appendChild(b);
+  }
+  row.appendChild(el('div','spacer'));
+  if(nextLabel){
+    const n = el('button','btn primary', nextLabel);
+    n.type='button';
+    if(nextEnabled === false) n.disabled = true;
+    n.addEventListener('click', nextFn);
+    row.appendChild(n);
+  }
+  return row;
+}
+
+/* =========================================================
+   7. 각 화면
+   ========================================================= */
+function screenIntro(){
+  const s = el('section','screen');
+  s.innerHTML =
+    '<div style="text-align:center;padding-block:44px 10px">' +
+      '<div class="eyebrow">중학교 3학년 과학 · 성단과 성운</div>' +
+      '<h1 style="font-family:\'Gowun Batang\',serif;font-size:clamp(32px,8.4vw,52px);font-weight:700;line-height:1.28;letter-spacing:-.02em">AI로 만드는<br>나만의 우주</h1>' +
+      '<p class="lead" style="max-width:26em;margin:20px auto 0">나의 성격과 특징을 찾아보고,<br>세상에 하나뿐인 성단과 성운을 만들어보세요.</p>' +
+    '</div>';
+  const wrap = el('div','', '');
+  wrap.style.cssText = 'margin-top:34px;display:flex;flex-direction:column;gap:12px;align-items:center';
+  const start = el('button','btn primary big','나의 우주 탐험 시작하기  →');
+  start.type='button';
+  start.style.maxWidth = '420px';
+  start.addEventListener('click', ()=>go('info'));
+  wrap.appendChild(start);
+  if(hasSaved()){
+    const cont = el('button','btn ghost','이어서 하기 (저장된 활동 불러오기)');
+    cont.type='button';
+    cont.addEventListener('click', ()=>{ go(S.screenSaved || 'info'); });
+    wrap.appendChild(cont);
+  }
+  s.appendChild(wrap);
+  const note = el('p','note');
+  note.style.cssText='text-align:center;margin-top:30px';
+  note.textContent = '입력한 정보는 서버로 보내지 않고, 지금 사용 중인 브라우저에만 남습니다.';
+  s.appendChild(note);
+  return s;
+}
+let savedScreen = null;
+function hasSaved(){ return savedScreen && savedScreen !== 'intro'; }
+
+function screenInfo(){
+  const s = el('section','screen');
+  s.innerHTML =
+    '<div class="eyebrow">기본 정보</div>' +
+    '<h2 class="q">나를 소개해 주세요</h2>' +
+    '<p class="lead">여기에 입력한 내용은 마지막 포스터 제작 프롬프트에 그대로 들어갑니다.</p>';
+  const f = el('div','fields');
+  f.innerHTML =
+    '<div class="field"><label for="fGrade">학년</label>' +
+      '<select id="fGrade"><option value="1">1학년</option><option value="2">2학년</option><option value="3">3학년</option></select></div>' +
+    '<div class="field"><label for="fClass">반</label><input id="fClass" type="number" inputmode="numeric" min="1" max="20" placeholder="예: 1"></div>' +
+    '<div class="field"><label for="fNum">번호</label><input id="fNum" type="number" inputmode="numeric" min="1" max="40" placeholder="예: 12"></div>' +
+    '<div class="field f-name"><label for="fName">이름</label><input id="fName" type="text" maxlength="12" placeholder="예: 홍길동"></div>';
+  s.appendChild(f);
+  const pv = el('div','preview');
+  s.appendChild(pv);
+
+  const g = f.querySelector('#fGrade'), c = f.querySelector('#fClass'),
+        n = f.querySelector('#fNum'), nm = f.querySelector('#fName');
+  g.value = S.studentGrade || '3';
+  c.value = S.studentClass; n.value = S.studentNumber; nm.value = S.studentName;
+
+  const nav = navRow(()=>go('intro'), '다음 →', ()=>go('concept'), false);
+  const nextBtn = nav.querySelector('.btn.primary');
+
+  function sync(){
+    S.studentGrade = g.value; S.studentClass = c.value.trim();
+    S.studentNumber = n.value.trim(); S.studentName = nm.value.trim();
+    pv.textContent = S.studentGrade + '학년 ' + (S.studentClass||'○') + '반 ' +
+                     (S.studentNumber||'○') + '번 ' + (S.studentName||'○○○');
+    nextBtn.disabled = !(S.studentClass && S.studentNumber && S.studentName);
+    save();
+  }
+  [g,c,n,nm].forEach(x=>{ x.addEventListener('input', sync); x.addEventListener('change', sync); });
+  sync();
+  s.appendChild(nav);
+  const note = el('p','note'); note.style.marginTop='18px';
+  note.textContent = '개인정보는 서버에 저장하지 않습니다. 이 브라우저를 벗어나지 않아요.';
+  s.appendChild(note);
+  return s;
+}
+
+function screenConcept(){
+  const s = el('section','screen');
+  s.innerHTML =
+    '<div class="eyebrow">알고 시작하기</div>' +
+    '<h2 class="q">성단과 성운, 무엇이 다를까?</h2>' +
+    '<p class="lead">내가 만들 작품이 무엇인지 먼저 확인해요. 둘은 완전히 다른 천체랍니다.</p>' +
+    '<div class="stack">' +
+      '<div class="card">' +
+        '<h3>성단 — 별들의 집단</h3>' +
+        '<p class="sci">많은 <b>별들</b>이 중력에 의해 모여 있는 집단.</p>' +
+        '<div class="subcards">' +
+          '<div class="subcard"><b>산개성단</b><span>비교적 성기게 모여 있는 별들의 집단</span></div>' +
+          '<div class="subcard"><b>구상성단</b><span>많은 별들이 공처럼 빽빽하게 모여 있는 집단</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card">' +
+        '<h3>성운 — 가스와 먼지의 구름</h3>' +
+        '<p class="sci">우주 공간에 존재하는 거대한 <b>가스와 먼지 구름</b>.</p>' +
+      '</div>' +
+    '</div>';
+  const nav = navRow(()=>go('info'), '이제 나의 우주를 찾아볼래요! →', ()=>go('quiz', 0));
+  s.appendChild(nav);
+  return s;
+}
+
+function screenQuiz(){
+  const qs = questions();
+  if(S.qi >= qs.length){ return screenResult(); }
+  const q = qs[S.qi];
+  const s = el('section','screen');
+  s.appendChild(el('div','eyebrow', '나는 어떤 우주일까? · 질문 ' + (S.qi+1) + ' / ' + qs.length));
+  s.appendChild(el('h2','q', q.title));
+  if(q.lead) s.appendChild(el('p','lead', q.lead));
+
+  const cur = answerOf(q.id);
+  const advance = ()=>{ setTimeout(()=>{
+    const list = questions();
+    if(S.qi + 1 >= list.length) go('result');
+    else go('quiz', S.qi + 1);
+  }, 240); };
+
+  if(q.variant === 'mbti'){
+    const grid = el('div','mbti');
+    MBTI_LIST.forEach(m=>{
+      const b = optionButton(m, null, 0, cur === m, ()=>{
+        S.mbti = m; S.mbtiKnown = true;
+        S.axes = {EI:m[0], SN:m[1], TF:m[2], JP:m[3]};
+        save(); render(); advance();
+      });
+      grid.appendChild(b);
+    });
+    s.appendChild(grid);
+    const wide = el('div','wide');
+    wide.appendChild(optionButton('잘 모르겠어요', null, 0, cur === '__unknown__', ()=>{
+      S.mbti = ''; S.mbtiKnown = false;
+      save(); render(); advance();
+    }));
+    s.appendChild(wide);
+    if(q.foot){
+      const f = el('p','note'); f.style.marginTop='18px'; f.textContent = q.foot;
+      s.appendChild(f);
+    }
+  }else{
+    const box = el('div', q.options.length > 3 ? 'grid2' : 'stack');
+    q.options.forEach((o, i)=>{
+      const val = o.id !== undefined ? o.id : (i+1);
+      box.appendChild(optionButton(o.t, o.d, i+1, cur === val, ()=>{
+        setAnswer(q.id, val); render(); advance();
+      }));
+    });
+    s.appendChild(box);
+  }
+
+  const back = ()=>{ if(S.qi === 0) go('concept'); else go('quiz', S.qi - 1); };
+  s.appendChild(navRow(back, null, null));
+  return s;
+}
+
+function screenResult(){
+  const s = el('section','screen');
+  if(!ready()){
+    s.innerHTML = '<h2 class="q">아직 답하지 않은 질문이 있어요</h2><p class="lead">테스트를 마치면 결과가 만들어집니다.</p>';
+    s.appendChild(navRow(null, '테스트 계속하기', ()=>go('quiz', 0)));
+    return s;
+  }
+  const x = R();
+  s.appendChild(el('div','eyebrow','테스트 결과'));
+  s.appendChild(el('h2','q','나의 우주 DNA가 완성되었습니다!'));
+
+  const dna = el('div','dna');
+  dna.appendChild(el('div','type','「' + x.typeName + '」'));
+  dna.appendChild(el('p','sum', x.summary));
+  const rows = el('dl','rows');
+  const data = [
+    ['대표 색', x.c.name],
+    ['나를 나타내는 가치', x.v.name],
+    ['에너지의 움직임', x.e.name],
+    ['우주의 분위기', x.m.name],
+    ['우주 속 나의 모습', x.r.name],
+    ['작품이 주는 느낌', x.f.name]
+  ];
+  if(x.obj) data.push(['선택한 천체', x.obj.name]);
+  data.forEach(([k,v])=>{
+    const r = el('div','row');
+    r.appendChild(el('dt','',k));
+    r.appendChild(el('dd','',v));
+    rows.appendChild(r);
+  });
+  dna.appendChild(rows);
+  const hint = el('p','hintline');
+  hint.textContent = '작품에 참고할 시각 표현 요소 · ' + x.keys.join(' · ') + (S.mbti ? '  (참고한 MBTI: ' + S.mbti + ')' : '');
+  dna.appendChild(hint);
+  s.appendChild(dna);
+
+  const note = el('p','note'); note.style.marginTop='16px';
+  note.textContent = '이 결과는 성격을 판정한 것이 아니라, 내가 고른 답을 작품 아이디어로 바꾸어 놓은 것입니다. 같은 질문에 답해도 친구마다 서로 다른 우주가 만들어져요.';
+  s.appendChild(note);
+
+  const acts = el('div','navrow');
+  const again = el('button','btn ghost','테스트 다시 하기'); again.type='button';
+  again.addEventListener('click', ()=>go('quiz', 0));
+  const card = el('button','btn ghost','결과 카드 이미지로 보기'); card.type='button';
+  card.addEventListener('click', showCard);
+  acts.appendChild(again); acts.appendChild(card);
+  acts.appendChild(el('div','spacer'));
+  const next = el('button','btn primary','다음 →'); next.type='button';
+  next.addEventListener('click', ()=>go('object'));
+  acts.appendChild(next);
+  s.appendChild(acts);
+  return s;
+}
+
+function screenObject(){
+  const s = el('section','screen');
+  s.appendChild(el('div','eyebrow','작품 종류 선택'));
+  s.appendChild(el('h2','q','나는 어떤 우주를 만들고 싶을까?'));
+  s.appendChild(el('p','lead','성단은 별들의 집단, 성운은 가스와 먼지 구름이라는 점을 기억하세요.'));
+  const box = el('div','stack');
+  [['nebula',1],['open',2],['globular',3]].forEach(([k,i])=>{
+    const o = OBJECTS[k];
+    box.appendChild(optionButton(o.label, o.desc, i, S.spaceObject === k, ()=>{
+      S.spaceObject = k;
+      if(!S.descTouched) S.artworkDescription = '';
+      save(); render();
+    }));
+  });
+  s.appendChild(box);
+
+  if(S.spaceObject){
+    const x = R();
+    const conf = el('div','card');
+    conf.style.marginTop = '20px';
+    conf.innerHTML = '<h3>이렇게 완성됩니다</h3><p class="sci">' + x.summary + '</p>';
+    s.appendChild(conf);
+  }
+  s.appendChild(navRow(()=>go('result'), '프롬프트 만들기 →', ()=>go('image'), !!S.spaceObject));
+  return s;
+}
+
+function screenImage(){
+  const s = el('section','screen');
+  s.appendChild(el('div','eyebrow','AI 이미지 생성'));
+  s.appendChild(el('h2','q','AI에게 나의 우주를 부탁해볼까요?'));
+  s.appendChild(el('p','lead','내가 고른 답으로 완성된 프롬프트예요. 복사해서 이미지 생성 AI에 붙여넣으면 됩니다.'));
+  const p = buildImagePrompt();
+  const box = el('div','promptbox');
+  box.textContent = p;
+  s.appendChild(box);
+  s.appendChild(copyBlock(p, '프롬프트 복사하기', '복사 완료! 이제 이미지 생성 AI에 붙여넣어 보세요 🚀'));
+  const tip = el('p','tip');
+  tip.textContent = '마음에 들지 않으면 이전으로 돌아가 답을 바꿔도 좋아요. 같은 프롬프트라도 AI는 매번 조금씩 다른 우주를 그려 줍니다.';
+  s.appendChild(tip);
+  s.appendChild(navRow(()=>go('object'), '이미지를 만들었어요 →', ()=>go('desc')));
+  return s;
+}
+
+function screenDesc(){
+  const s = el('section','screen');
+  s.appendChild(el('div','eyebrow','작품 설명과 제목'));
+  s.appendChild(el('h2','q','내 작품의 이야기를 완성해보세요'));
+  s.appendChild(el('p','lead','AI가 만든 초안을 읽고, 내 생각과 다른 부분이 있다면 자유롭게 고쳐보세요.'));
+
+  if(!S.artworkDescription) S.artworkDescription = buildDescription();
+  const ta = el('textarea');
+  ta.id = 'descArea';
+  ta.setAttribute('aria-label','작품 설명');
+  ta.value = S.artworkDescription;
+  ta.addEventListener('input', ()=>{ S.artworkDescription = ta.value; S.descTouched = true; save(); });
+  s.appendChild(ta);
+
+  const redo = el('button','btn ghost','초안 다시 받기');
+  redo.type='button'; redo.style.marginTop='12px'; redo.style.padding='12px 18px'; redo.style.fontSize='15px';
+  redo.addEventListener('click', ()=>{
+    S.artworkDescription = buildDescription(); S.descTouched = false; save();
+    ta.value = S.artworkDescription;
+  });
+  s.appendChild(redo);
+
+  const th = el('h2','q','작품 제목 정하기');
+  th.style.marginTop = '36px';
+  s.appendChild(th);
+  s.appendChild(el('p','lead','짧고 기억에 남는 제목을 지어보세요.'));
+  const inp = el('input');
+  inp.type='text'; inp.id='titleInput'; inp.maxLength = 30;
+  inp.placeholder = '예: 보랏빛 탐험';
+  inp.value = S.artworkTitle;
+  inp.style.cssText = 'width:100%;padding:16px;font-size:18px;border-radius:12px;background:rgba(9,14,38,.75);border:1.5px solid var(--line);color:var(--text);font-family:inherit;margin-top:14px';
+  inp.addEventListener('input', ()=>{ S.artworkTitle = inp.value; save(); });
+  s.appendChild(inp);
+
+  const rec = el('button','btn ghost','제목 추천받기');
+  rec.type='button'; rec.style.marginTop='14px'; rec.style.padding='13px 20px'; rec.style.fontSize='16px';
+  const chips = el('div','chips');
+  rec.addEventListener('click', ()=>{
+    chips.innerHTML = '';
+    buildTitles().forEach(t=>{
+      const c = el('button','chip', t); c.type='button';
+      c.addEventListener('click', ()=>{ S.artworkTitle = t; inp.value = t; save(); });
+      chips.appendChild(c);
+    });
+  });
+  s.appendChild(rec);
+  s.appendChild(chips);
+
+  s.appendChild(navRow(()=>go('image'), '포스터 만들기 →', ()=>{
+    if(!S.artworkTitle) S.artworkTitle = buildTitles()[0];
+    save(); go('poster');
+  }));
+  return s;
+}
+
+function screenPoster(){
+  const s = el('section','screen');
+  s.appendChild(el('div','eyebrow','마지막 단계'));
+  s.appendChild(el('h2','q','나의 우주 작품을 포스터로 만들어보자!'));
+  s.appendChild(el('p','lead','앞에서 만든 작품 이미지를 AI에 먼저 첨부한 뒤, 아래 프롬프트를 붙여넣으세요. A4 세로형 포스터가 만들어집니다.'));
+  const p = buildPosterPrompt();
+  const box = el('div','promptbox');
+  box.textContent = p;
+  s.appendChild(box);
+  s.appendChild(copyBlock(p, '포스터 프롬프트 복사하기', '복사 완료! 작품 이미지를 AI에 첨부하고 이 프롬프트를 붙여넣어 보세요.'));
+  const tip = el('p','tip');
+  tip.textContent = '포스터에는 학생 정보 · 내가 만든 이미지 · 작품 제목 · 작품 설명이 모두 들어갑니다. 이미지를 첨부하지 않으면 AI가 다른 그림을 그려 넣을 수 있으니 꼭 먼저 첨부하세요.';
+  s.appendChild(tip);
+  s.appendChild(navRow(()=>go('desc'), '활동 마무리하기 →', ()=>go('done')));
+  return s;
+}
+
+function screenDone(){
+  const s = el('section','screen finale');
+  s.appendChild(el('h2','','나만의 우주 완성!'));
+  const p = el('p','');
+  p.innerHTML = '같은 질문에 답해도 친구마다 서로 다른 우주가 만들어집니다.<br>' +
+    '우주에 서로 다른 별과 성운이 존재하듯, 우리도 서로 다른 특징과 생각을 가지고 있습니다.<br>' +
+    '내가 만든 우주에는 어떤 나의 모습이 담겨 있는지 친구들과 이야기해보세요.';
+  s.appendChild(p);
+
+  const btns = el('div','btns');
+  const b1 = el('button','btn ghost','처음부터 다시 하기'); b1.type='button';
+  let armed = false;
+  b1.addEventListener('click', ()=>{
+    if(!armed){
+      armed = true;
+      b1.textContent = '정말 지울까요? 한 번 더 누르기';
+      setTimeout(()=>{ armed = false; b1.textContent = '처음부터 다시 하기'; }, 4000);
+      return;
+    }
+    reset(); savedScreen = null; render();
+  });
+  const b2 = el('button','btn primary','내 결과 다시 보기'); b2.type='button';
+  b2.addEventListener('click', ()=>go('result'));
+  btns.appendChild(b1); btns.appendChild(b2);
+  s.appendChild(btns);
+
+  const extra = el('div','btns');
+  extra.style.marginTop = '14px';
+  const b3 = el('button','btn ghost','결과 카드 이미지 저장'); b3.type='button';
+  b3.addEventListener('click', showCard);
+  const b4 = el('button','btn ghost','활동 요약 복사하기'); b4.type='button';
+  b4.addEventListener('click', async ()=>{
+    const ok = await copyText(buildSummaryText());
+    b4.textContent = ok ? '복사 완료!' : '복사 실패';
+    setTimeout(()=>{ b4.textContent = '활동 요약 복사하기'; }, 2200);
+  });
+  const b5 = el('button','btn ghost','요약 파일로 저장'); b5.type='button';
+  b5.addEventListener('click', async ()=>{
+    const name = (S.studentClass||'0') + '반_' + (S.studentNumber||'0') + '번_' + (S.studentName||'학생') + '_우주활동.txt';
+    b5.textContent = '저장 중…';
+    const r = await saveFile(name, buildSummaryText(), 'text/plain;charset=utf-8');
+    b5.textContent = r === 'saved' ? '저장했어요!' : (r === 'declined' ? '저장을 취소했어요' : '저장이 안 돼요 — 복사를 이용하세요');
+    setTimeout(()=>{ b5.textContent = '요약 파일로 저장'; }, 2600);
+  });
+  extra.appendChild(b3); extra.appendChild(b4); extra.appendChild(b5);
+  s.appendChild(extra);
+
+  const n = el('p','note');
+  n.style.marginTop = '26px';
+  n.textContent = '이 화면을 닫아도 같은 브라우저에서는 결과가 남아 있습니다.';
+  s.appendChild(n);
+  return s;
+}
+
+/* =========================================================
+   8. 복사 / 저장
+   ========================================================= */
+async function copyText(text){
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  }catch(e){}
+  try{
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  }catch(e){ return false; }
+}
+function copyBlock(text, label, doneMsg){
+  const wrap = el('div','copywrap');
+  const b = el('button','btn copy', label);
+  b.type = 'button';
+  const toast = el('p','toast');
+  b.addEventListener('click', async ()=>{
+    const ok = await copyText(text);
+    if(ok){
+      b.classList.add('done');
+      b.textContent = '✓ 복사했어요';
+      toast.textContent = doneMsg;
+      setTimeout(()=>{ b.classList.remove('done'); b.textContent = label; }, 3000);
+    }else{
+      toast.style.color = 'var(--rose)';
+      toast.textContent = '복사가 되지 않았어요. 프롬프트 글자를 직접 드래그해서 복사해 주세요.';
+    }
+  });
+  wrap.appendChild(b); wrap.appendChild(toast);
+  return wrap;
+}
+/* 게시된 페이지에서는 claude 런타임의 downloads 기능을,
+   파일로 직접 열었을 때는 일반 다운로드를 사용합니다. */
+let _dlNs;
+async function downloadsNs(){
+  if(_dlNs !== undefined) return _dlNs;
+  _dlNs = null;
+  try{
+    if(window.claude && typeof window.claude.use === 'function'){
+      _dlNs = await window.claude.use('downloads');
+    }
+  }catch(e){ _dlNs = null; }
+  return _dlNs;
+}
+async function saveFile(filename, data, mime){
+  const ns = await downloadsNs();
+  if(ns && ns.save){
+    try{ await ns.save({filename, data}); return 'saved'; }
+    catch(e){ return (e && e.code === 'declined') ? 'declined' : 'fail'; }
+  }
+  try{
+    const blob = (data instanceof Blob) ? data : new Blob([data], {type: mime || 'text/plain;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1500);
+    return 'saved';
+  }catch(e){ return 'fail'; }
+}
+function dataUrlToBlob(u){
+  const [head, b64] = u.split(',');
+  const mime = head.match(/:(.*?);/)[1];
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], {type:mime});
+}
+
+/* ---- 결과 카드 이미지 ---- */
+function wrapText(ctx, text, x, y, maxW, lh){
+  const words = String(text).split('');
+  let line = '', yy = y;
+  for(const ch of words){
+    if(ctx.measureText(line + ch).width > maxW && line){
+      ctx.fillText(line, x, yy); line = ch; yy += lh;
+    }else line += ch;
+  }
+  if(line) ctx.fillText(line, x, yy);
+  return yy + lh;
+}
+async function drawCard(){
+  if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+  const W = 1080, H = 1660;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const g = cv.getContext('2d');
+  const x = R();
+
+  g.fillStyle = '#05081A'; g.fillRect(0,0,W,H);
+  let rg = g.createRadialGradient(W*0.5, H*0.18, 40, W*0.5, H*0.18, W*0.95);
+  rg.addColorStop(0, x.c.grad[1] + 'AA');
+  rg.addColorStop(0.45, x.c.grad[0] + '44');
+  rg.addColorStop(1, 'rgba(5,8,26,0)');
+  g.fillStyle = rg; g.fillRect(0,0,W,H);
+  for(let i=0;i<260;i++){
+    const sx = Math.random()*W, sy = Math.random()*H, r = Math.random()*1.9+0.3;
+    g.globalAlpha = Math.random()*0.75 + 0.2;
+    g.fillStyle = '#FFFFFF';
+    g.beginPath(); g.arc(sx,sy,r,0,Math.PI*2); g.fill();
+  }
+  g.globalAlpha = 1;
+  g.strokeStyle = 'rgba(180,190,255,.35)'; g.lineWidth = 3;
+  g.strokeRect(40,40,W-80,H-80);
+
+  const L = 96, maxW = W - 192;
+  g.textBaseline = 'top';
+  g.fillStyle = '#9FE8F5';
+  g.font = '500 30px "IBM Plex Mono", monospace';
+  g.fillText('MY  UNIVERSE  DNA', L, 118);
+
+  g.fillStyle = '#FFFFFF';
+  g.font = '700 74px "Gowun Batang", serif';
+  let y = wrapText(g, x.typeName, L, 178, maxW, 92);
+
+  g.fillStyle = '#C9B8FF';
+  g.font = '400 32px "IBM Plex Sans KR", sans-serif';
+  y = wrapText(g, x.summary, L, y + 18, maxW, 48) + 26;
+
+  const rows = [
+    ['대표 색', x.c.name],
+    ['나를 나타내는 가치', x.v.name],
+    ['에너지의 움직임', x.e.name],
+    ['우주의 분위기', x.m.name],
+    ['우주 속 나의 모습', x.r.name],
+    ['작품이 주는 느낌', x.f.name],
+    ['선택한 천체', x.obj ? x.obj.name : '-']
+  ];
+  for(const [k,v] of rows){
+    g.fillStyle = 'rgba(10,16,44,.72)';
+    g.fillRect(L, y, maxW, 96);
+    g.strokeStyle = 'rgba(150,168,230,.25)'; g.lineWidth = 2;
+    g.strokeRect(L, y, maxW, 96);
+    g.fillStyle = '#8E9AC6';
+    g.font = '400 26px "IBM Plex Sans KR", sans-serif';
+    g.fillText(k, L+26, y+16);
+    g.fillStyle = '#EAF0FF';
+    g.font = '500 34px "IBM Plex Sans KR", sans-serif';
+    g.fillText(v, L+26, y+50);
+    y += 108;
+  }
+
+  y += 14;
+  g.fillStyle = '#7C87B4';
+  g.font = '400 25px "IBM Plex Mono", monospace';
+  y = wrapText(g, '시각 표현 참고 · ' + x.keys.join(' · '), L, y, maxW, 38) + 16;
+
+  if(S.artworkTitle){
+    g.fillStyle = '#F5A8CF';
+    g.font = '400 28px "IBM Plex Sans KR", sans-serif';
+    g.fillText('작품 제목', L, y);
+    g.fillStyle = '#FFFFFF';
+    g.font = '700 46px "Gowun Batang", serif';
+    y = wrapText(g, '「' + S.artworkTitle + '」', L, y + 42, maxW, 58);
+  }
+
+  g.fillStyle = '#9FAAD6';
+  g.font = '400 30px "IBM Plex Sans KR", sans-serif';
+  g.fillText(S.studentGrade + '학년 ' + (S.studentClass||'○') + '반 ' + (S.studentNumber||'○') + '번  ' + (S.studentName||''), L, H-140);
+  g.fillStyle = '#5E6894';
+  g.font = '400 24px "IBM Plex Mono", monospace';
+  g.fillText('AI로 만드는 나만의 우주 · 중학교 과학', L, H-96);
+
+  return cv.toDataURL('image/png');
+}
+async function showCard(){
+  const ov = el('div','overlay');
+  const box = el('div','box');
+  box.innerHTML = '<p class="note">결과 카드를 만드는 중이에요…</p>';
+  ov.appendChild(box);
+  ov.addEventListener('click', e=>{ if(e.target === ov) ov.remove(); });
+  document.body.appendChild(ov);
+  let url;
+  try{ url = await drawCard(); }
+  catch(e){ box.innerHTML = '<p class="note">카드를 만들지 못했어요.</p>'; return; }
+  box.innerHTML = '';
+  const img = el('img');
+  img.src = url; img.alt = '나의 우주 DNA 결과 카드';
+  box.appendChild(img);
+  const n = el('p','note');
+  n.textContent = '이미지를 길게 누르거나(모바일) 마우스 오른쪽 버튼을 눌러 저장할 수 있어요.';
+  box.appendChild(n);
+  const row = el('div','btns');
+  row.style.cssText = 'display:flex;gap:10px;justify-content:center;flex-wrap:wrap';
+  const dl = el('button','btn ghost','이미지로 저장하기'); dl.type='button';
+  dl.addEventListener('click', async ()=>{
+    dl.textContent = '저장 중…';
+    const r = await saveFile((S.studentName || '나') + '_우주DNA.png', dataUrlToBlob(url), 'image/png');
+    dl.textContent = r === 'saved' ? '저장했어요!' : (r === 'declined' ? '저장을 취소했어요' : '길게 눌러 저장해 주세요');
+    setTimeout(()=>{ dl.textContent = '이미지로 저장하기'; }, 2600);
+  });
+  const close = el('button','btn primary','닫기'); close.type='button';
+  close.addEventListener('click', ()=>ov.remove());
+  row.appendChild(dl); row.appendChild(close);
+  box.appendChild(row);
+}
+
+/* =========================================================
+   9. 렌더 / 부팅
+   ========================================================= */
+function render(){
+  const map = {
+    intro:screenIntro, info:screenInfo, concept:screenConcept, quiz:screenQuiz,
+    result:screenResult, object:screenObject, image:screenImage,
+    desc:screenDesc, poster:screenPoster, done:screenDone
+  };
+  const fn = map[S.screen] || screenIntro;
+  app.innerHTML = '';
+  app.appendChild(fn());
+  updateBar();
+}
+
+/* 별 배경 */
+(function sky(){
+  const cv = document.getElementById('stars');
+  const g = cv.getContext('2d');
+  let stars = [], w = 0, h = 0, raf = null;
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function build(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = cv.clientWidth; h = cv.clientHeight;
+    cv.width = w * dpr; cv.height = h * dpr;
+    g.setTransform(dpr,0,0,dpr,0,0);
+    const n = Math.min(130, Math.round(w * h / 11000));
+    stars = [];
+    for(let i=0;i<n;i++){
+      stars.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.3+0.3,
+        a:Math.random()*0.6+0.25, s:Math.random()*0.012+0.004, p:Math.random()*Math.PI*2});
+    }
+  }
+  let last = 0;
+  function frame(t){
+    raf = requestAnimationFrame(frame);
+    if(t - last < 55) return;
+    last = t;
+    g.clearRect(0,0,w,h);
+    for(const s of stars){
+      s.p += s.s;
+      const a = s.a + Math.sin(s.p) * 0.25;
+      g.globalAlpha = Math.max(0.06, Math.min(1, a));
+      g.fillStyle = '#EEF2FF';
+      g.beginPath(); g.arc(s.x, s.y, s.r, 0, Math.PI*2); g.fill();
+    }
+    g.globalAlpha = 1;
+  }
+  function still(){
+    g.clearRect(0,0,w,h);
+    for(const s of stars){
+      g.globalAlpha = s.a; g.fillStyle = '#EEF2FF';
+      g.beginPath(); g.arc(s.x, s.y, s.r, 0, Math.PI*2); g.fill();
+    }
+    g.globalAlpha = 1;
+  }
+  function start(){
+    build();
+    if(raf) cancelAnimationFrame(raf);
+    if(reduce) still(); else raf = requestAnimationFrame(frame);
+  }
+  let to;
+  window.addEventListener('resize', ()=>{ clearTimeout(to); to = setTimeout(start, 250); });
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.hidden){ if(raf){ cancelAnimationFrame(raf); raf = null; } }
+    else if(!reduce && !raf){ raf = requestAnimationFrame(frame); }
+  });
+  start();
+})();
+
+/* 저장된 활동 복원 */
+(function boot(){
+  const had = load();
+  if(had && S.screen && S.screen !== 'intro'){
+    savedScreen = S.screen;
+    S.screenSaved = savedScreen;
+    S.screen = 'intro';
+  }
+  render();
+})();
+</script>
+
+</body>
+</html>
